@@ -20,9 +20,14 @@
   ignore_errors: true
   changed_when: false
 
+- name: CPU architecture overrides
+  set_fact:
+    architectures:
+      aarch64: arm64 # Raspbery Pi 4 reports its platform as aarch64, the github release uses arm64.
+
 - name: Install AdGuardHome.
   ansible.builtin.unarchive:
-    src: "https://github.com/AdguardTeam/AdGuardHome/releases/download/v{{ adguardhome_version }}/AdGuardHome_linux_{{ansible_architecture}}.tar.gz"  # yamllint disable-line rule:line-length
+    src: "https://github.com/AdguardTeam/AdGuardHome/releases/download/v{{ adguardhome_version }}/AdGuardHome_{{ansible_system}}_{{ architectures[ansible_architecture] | default(ansible_architecture)}}.tar.gz"  # yamllint disable-line rule:line-length
     dest: /usr/local/bin/
     remote_src: true
     include:
