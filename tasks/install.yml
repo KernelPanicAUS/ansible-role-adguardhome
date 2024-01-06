@@ -53,3 +53,13 @@
     group: "{{ adguardhome_group }}"
     state: directory
     mode: 0755
+
+- name: Check if AdGuardHome service unit file exists
+  stat:
+    path: /etc/systemd/system/{{adguardhome_daemon}}.service
+  register: service_file
+
+- name: Run AdGuardHome install if service unit file doesn't exist
+  command: {{adguardhome_bin_dir}}/{{adguardhome_daemon}} -s install
+  when: not service_file.stat.exists
+
